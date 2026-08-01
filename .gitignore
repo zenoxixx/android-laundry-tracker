@@ -1,0 +1,32 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Keep the shared run configs / project name if you want teammates to see them,
+# otherwise you can also ignore all of .idea/
+# /.idea
+
+*.apk
+*.ap_
+*.dex
+*.class
+*.dm
+
+# Log files
+*.log
+
+# Keystore files (NEVER commit a real signing key)
+*.jks
+*.keystore

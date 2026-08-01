@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="chip_given">#FFF3D9</color>
+    <color name="chip_on_given">#5D4037</color>
+    <color name="chip_partially_returned">#E3F2FD</color>
+    <color name="chip_on_partially_returned">#0D47A1</color>
+    <color name="chip_returned">#D6F5D6</color>
+    <color name="chip_on_returned">#1B5E20</color>
+</resources>

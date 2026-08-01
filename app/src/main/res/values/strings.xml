@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Laundry Tracker</string>
+
+    <string name="search_hint">Search batches</string>
+    <string name="no_service">No service selected</string>
+    <string name="status_given">Sent</string>
+    <string name="status_returned">Returned</string>
+    <string name="status_partially_returned">Partially Returned</string>
+    <string name="given_on">Sent on %1$s</string>
+    <string name="returned_on">Returned on %1$s</string>
+
+    <string name="no_batches_title">No laundry yet</string>
+    <string name="no_batches_sub">Tap the + button to add your first batch.</string>
+
+    <string name="no_services_title">No laundry services</string>
+    <string name="no_services_sub">Add a service to associate with your batches.</string>
+
+    <string name="add_laundry">Add Laundry</string>
+    <string name="add_service">Add Service</string>
+    <string name="edit_service">Edit Service</string>
+    <string name="services_title">Laundry Services</string>
+    <string name="batch_details_title">Batch Details</string>
+    <string name="clothing_details_title">Clothing Details</string>
+
+    <string name="take_photo">Take photo</string>
+    <string name="pick_gallery">From gallery</string>
+    <string name="new_service">+ New service</string>
+    <string name="select_service">Laundry service</string>
+    <string name="batch_notes">Batch notes (optional)</string>
+    <string name="items_no_photos">Add at least one photo to begin.</string>
+    <string name="add_at_least_one_photo">Please add at least one photo.</string>
+    <string name="image_failed">Could not import that image.</string>
+    <string name="camera_denied">Camera permission denied.</string>
+
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="mark_returned">Mark returned</string>
+    <string name="mark_returned_msg">Mark this item as returned?</string>
+    <string name="mark_all_returned">Mark all returned</string>
+    <string name="mark_all_returned_msg">Mark every item in this batch as returned?</string>
+
+    <string name="delete_batch">Delete batch</string>
+    <string name="delete_batch_msg">This will remove the batch and all its items.</string>
+    <string name="delete_item">Delete item</string>
+    <string name="delete_item_msg">This will remove this clothing item.</string>
+    <string name="delete_service">Delete service</string>
+    <string name="delete_service_msg">This will remove the service. Batches will keep their history.</string>
+
+    <string name="name">Name</string>
+    <string name="brand">Brand</string>
+    <string name="type">Type (shirt, jeans…)</string>
+    <string name="price">Price</string>
+    <string name="bill_number">Bill number</string>
+    <string name="notes">Notes</string>
+    <string name="manager_name">Manager name</string>
+    <string name="phone">Phone</string>
+    <string name="address">Address</string>
+    <string name="clothing_name">Clothing name (optional)</string>
+    <string name="unnamed_item">Unnamed item</string>
+    <string name="remove_photo">Remove photo</string>
+
+    <string name="menu_search">Search</string>
+    <string name="menu_services">Laundry services</string>
+
+    <plurals name="items_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+
+    <!-- My Closet -->
+    <string name="closet_title">My Closet</string>
+    <string name="menu_closet">My Closet</string>
+    <string name="no_closet_title">Closet is empty</string>
+    <string name="no_closet_sub">Save items here to reuse them in future batches.</string>
+    <string name="add_to_closet">Add to Closet</string>
+    <string name="edit_closet_item">Edit Closet Item</string>
+    <string name="delete_closet_item">Delete item</string>
+    <string name="delete_closet_item_msg">Are you sure you want to remove this item from your closet?</string>
+    <string name="pick_closet">From My Closet</string>
+    <string name="save_to_closet_prompt">Would you like to save this clothing item to My Closet for future use?</string>
+    <string name="save_to_closet_yes">Save to My Closet</string>
+    <string name="save_to_closet_no">Not Now</string>
+    <string name="select_items">Select items</string>
+
+    <!-- Backup & Restore -->
+    <string name="menu_backup">Backup Data</string>
+    <string name="menu_restore">Restore Backup</string>
+    <string name="backup_success">Backup created successfully.</string>
+    <string name="backup_failed">Backup failed.</string>
+    <string name="restore_confirm_title">Restore Backup</string>
+    <string name="restore_confirm_msg">This backup has its own batches, closet items, and service providers. Would you like to add them to what you already have, or replace everything with the backup?</string>
+    <string name="restore_replace_confirm_title">Replace Everything?</string>
+    <string name="restore_replace_confirm_msg">This will permanently delete your current batches, closet, and service providers before restoring. This can\'t be undone. Continue?</string>
+    <string name="restore_action_merge">Add to Current Data</string>
+    <string name="restore_action_replace">Replace Everything</string>
+    <string name="restore_action_replace_short">Replace</string>
+    <string name="restore_success">Data restored.</string>
+    <string name="restore_success_restart">Data restored. Restarting app…</string>
+    <string name="restore_failed">Restore failed: %s</string>
+    <string name="invalid_backup">Invalid backup file.</string>
+    <string name="incompatible_backup">Backup was made by a newer version of the app.</string>
+</resources>

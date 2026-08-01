@@ -77,3 +77,5 @@ See [LICENSE](LICENSE) for details.
 ## 👤 Author
 
 [@zenoxixx](https://github.com/zenoxixx)
+
+Built with AI-assisted development (Lovable, Gemini) — architecture, review, debugging, and release process by me.

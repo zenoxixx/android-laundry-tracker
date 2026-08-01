@@ -11,6 +11,12 @@ Built entirely in Java with Room and MVVM, with zero backend, zero ads, and zero
 | ![Home](docs/screenshots/home.png) | ![Add](docs/screenshots/add.png) | ![Closet](docs/screenshots/closet.png) |
 -->
 
+## 📥 Download
+
+Grab the latest APK from the [Releases page](https://github.com/zenoxixx/android-laundry-tracker/releases/latest) — no Android Studio or building required. Requires Android 8.0 (API 26) or newer.
+
+> Since this isn't distributed through the Play Store, Android will ask you to confirm installing from an unknown source the first time — this is expected for any app installed outside the Play Store, not a warning specific to this app.
+
 ## ✨ Features
 
 - **Batch tracking** — log what you send to the laundry, who it went to, and its status (given / partially returned / returned)
@@ -48,7 +54,9 @@ com.example.laundrytracker
 
 Each screen follows the same pattern: an `Activity` observes `LiveData` exposed by its `ViewModel`, which delegates all data operations to a single shared `LaundryRepository`, which in turn talks to Room. No direct database access from the UI layer.
 
-## 🚀 Getting Started
+## 🚀 Build From Source
+
+Only needed if you want to modify the code — most people should just use the [Download](#-download) section above.
 
 1. Clone the repo:
    ```bash

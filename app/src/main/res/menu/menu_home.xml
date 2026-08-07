@@ -23,4 +23,8 @@
         android:id="@+id/action_restore"
         android:title="@string/menu_restore"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_export_logs"
+        android:title="@string/menu_export_logs"
+        app:showAsAction="never" />
 </menu>

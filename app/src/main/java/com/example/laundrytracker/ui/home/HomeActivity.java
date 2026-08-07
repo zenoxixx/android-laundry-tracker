@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +23,12 @@ import com.example.laundrytracker.ui.add.AddLaundryActivity;
 import com.example.laundrytracker.ui.batch.BatchDetailsActivity;
 import com.example.laundrytracker.ui.closet.ClosetActivity;
 import com.example.laundrytracker.ui.services.LaundryServicesActivity;
+import com.example.laundrytracker.util.AppLogger;
 import com.example.laundrytracker.util.BackupManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -115,6 +118,9 @@ public class HomeActivity extends AppCompatActivity {
         } else if (id == R.id.action_restore) {
             restoreBackupLauncher.launch(new String[]{"application/zip"});
             return true;
+        } else if (id == R.id.action_export_logs) {
+            exportLogs();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -125,6 +131,7 @@ public class HomeActivity extends AppCompatActivity {
                 BackupManager.createBackup(this, uri);
                 runOnUiThread(() -> Toast.makeText(this, R.string.backup_success, Toast.LENGTH_LONG).show());
             } catch (Exception e) {
+                AppLogger.e("Backup", "Backup failed", e);
                 runOnUiThread(() -> Toast.makeText(this, R.string.backup_failed, Toast.LENGTH_LONG).show());
             }
         }).start();
@@ -156,10 +163,8 @@ public class HomeActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (merge) {
                         Toast.makeText(this, R.string.restore_success, Toast.LENGTH_LONG).show();
-                        // ViewModels should refresh automatically as they observe LiveData from the DB
                     } else {
                         Toast.makeText(this, R.string.restore_success_restart, Toast.LENGTH_LONG).show();
-                        // Restart app for clean state after full replacement
                         Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
                         if (intent != null) {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -169,11 +174,27 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
             } catch (Exception e) {
+                AppLogger.e("Restore", "Restore failed", e);
                 runOnUiThread(() -> {
                     String msg = getString(R.string.restore_failed, e.getMessage());
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
+    }
+
+    private void exportLogs() {
+        File logFile = AppLogger.getLogFile();
+        if (logFile == null || !logFile.exists() || logFile.length() == 0) {
+            Toast.makeText(this, R.string.no_logs_to_export, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Uri contentUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", logFile);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(intent, getString(R.string.menu_export_logs)));
     }
 }

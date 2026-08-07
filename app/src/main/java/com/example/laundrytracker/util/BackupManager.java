@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
 import com.example.laundrytracker.db.AppDatabase;
 import com.example.laundrytracker.model.ClosetItem;
 import com.example.laundrytracker.model.ClothingItem;
@@ -32,15 +34,29 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class BackupManager {
+    private static final String TAG = "BackupManager";
     private static final String MANIFEST_NAME = "manifest.json";
     private static final String DB_NAME = "laundry.db";
     private static final String PHOTOS_DIR = "photos";
     private static final int DB_VERSION = 2;
 
     public static void createBackup(Context context, Uri targetUri) throws Exception {
-        AppDatabase.get(context).getOpenHelper().getWritableDatabase().execSQL("PRAGMA wal_checkpoint(FULL)");
+        AppLogger.i(TAG, "Starting backup creation to: " + targetUri);
+
+        SupportSQLiteDatabase writableDb = AppDatabase.get(context).getOpenHelper().getWritableDatabase();
+        // SupportSQLiteDatabase.query(String, Object[]) requires bindArgs to be non-null.
+        // We use an empty array to avoid the NullPointerException and iterate the cursor to ensure execution.
+        try (Cursor cursor = writableDb.query("PRAGMA wal_checkpoint(FULL)", new Object[0])) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    // Result not needed, just triggering the checkpoint
+                }
+            }
+        }
+
         AppDatabase.get(context).close();
         AppDatabase.destroyInstance();
+        AppLogger.i(TAG, "Database closed and checkpointed");
 
         try (OutputStream os = context.getContentResolver().openOutputStream(targetUri);
              ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(os))) {
@@ -66,6 +82,7 @@ public class BackupManager {
                     }
                 }
             }
+            AppLogger.i(TAG, "Zip file written successfully");
         }
     }
 
@@ -83,9 +100,12 @@ public class BackupManager {
     }
 
     public static void restoreBackup(Context context, Uri sourceUri, boolean merge) throws Exception {
+        AppLogger.i(TAG, "Starting restore from: " + sourceUri + " (merge=" + merge + ")");
         File tempDir = new File(context.getCacheDir(), "restore_temp");
         if (tempDir.exists()) deleteRecursive(tempDir);
-        tempDir.mkdirs();
+        if (!tempDir.mkdirs()) {
+            AppLogger.w(TAG, "Could not create restore temp directory");
+        }
 
         try (InputStream is = context.getContentResolver().openInputStream(sourceUri);
              ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is))) {
@@ -111,13 +131,20 @@ public class BackupManager {
                 zis.closeEntry();
             }
 
-            if (!hasManifest) throw new Exception("Invalid backup: Missing manifest");
+            if (!hasManifest) {
+                AppLogger.e(TAG, "Invalid backup: Missing manifest", null);
+                throw new Exception("Invalid backup: Missing manifest");
+            }
 
             File manifestFile = new File(tempDir, MANIFEST_NAME);
             String content = readFileToString(manifestFile);
             JSONObject manifest = new JSONObject(content);
             int version = manifest.getInt("version");
-            if (version > DB_VERSION) throw new Exception("Backup is from a newer version of the app");
+            if (version > DB_VERSION) {
+                AppLogger.e(TAG, "Backup is from a newer version: " + version, null);
+                throw new Exception("Backup is from a newer version of the app");
+            }
+            AppLogger.i(TAG, "Manifest validated successfully");
 
             if (merge) {
                 performMerge(context, tempDir);
@@ -145,13 +172,19 @@ public class BackupManager {
         File backupPhotos = new File(tempDir, PHOTOS_DIR);
         if (backupPhotos.exists()) {
             if (currentPhotos.exists()) deleteRecursive(currentPhotos);
-            backupPhotos.renameTo(currentPhotos);
+            if (!backupPhotos.renameTo(currentPhotos)) {
+                AppLogger.w(TAG, "Could not rename photos directory during restore");
+            }
         }
+        AppLogger.i(TAG, "Restore replace complete");
     }
 
     private static void performMerge(Context context, File tempDir) throws Exception {
         File backupDbFile = new File(tempDir, "db/" + DB_NAME);
-        if (!backupDbFile.exists()) throw new Exception("Backup database file missing");
+        if (!backupDbFile.exists()) {
+            AppLogger.e(TAG, "Backup database file missing during merge", null);
+            throw new Exception("Backup database file missing");
+        }
 
         SQLiteDatabase backupDb = SQLiteDatabase.openDatabase(backupDbFile.getPath(), null, SQLiteDatabase.OPEN_READONLY);
         AppDatabase db = AppDatabase.get(context);
@@ -205,6 +238,7 @@ public class BackupManager {
                     }
                 }
             }
+            AppLogger.i(TAG, "Restore merge complete");
         } finally {
             backupDb.close();
         }
@@ -299,7 +333,11 @@ public class BackupManager {
     private static void copyFile(File src, File dst) throws IOException {
         if (!src.exists()) return;
         File parent = dst.getParentFile();
-        if (parent != null) parent.mkdirs();
+        if (parent != null) {
+            if (!parent.exists() && !parent.mkdirs()) {
+                throw new IOException("Could not create destination directory: " + parent);
+            }
+        }
         try (InputStream in = new FileInputStream(src);
              OutputStream out = new FileOutputStream(dst)) {
             byte[] buf = new byte[8192];
@@ -321,8 +359,8 @@ public class BackupManager {
     private static String readFileToString(File file) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             byte[] data = new byte[(int) file.length()];
-            is.read(data);
-            return new String(data, StandardCharsets.UTF_8);
+            int read = is.read(data);
+            return new String(data, 0, read != -1 ? read : 0, StandardCharsets.UTF_8);
         }
     }
 }
